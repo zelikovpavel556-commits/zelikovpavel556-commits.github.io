@@ -165,6 +165,24 @@ main {
   font-size: 15px;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.pagination__info {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.mini-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .theme-switch {
   display: flex;
   align-items: center;
