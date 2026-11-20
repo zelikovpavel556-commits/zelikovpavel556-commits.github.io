@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zerkinl — новости</title>
+<meta name="description" content="Новости Zerkinl">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+
+  <header class="site-header">
+    <div class="brand">Zerkinl<span class="brand-accent">.</span></div>
+    <button id="adminToggle" class="admin-btn" type="button">Админ</button>
+  </header>
+
+  <section class="hero">
+    <h1 class="hero__title">Новости</h1>
+    <p class="hero__tagline">Анонсы, обновления и события.</p>
+  </section>
+
+  <section id="posts" class="posts" aria-live="polite"></section>
+
+  <section id="admin" class="admin" hidden>
+    <div class="admin-card">
+      <div class="admin-head">
+        <h2 class="admin__title">Админка</h2>
+        <button id="adminClose" class="admin-close" type="button" aria-label="Закрыть">×</button>
+      </div>
+
+      <form id="adminAuthForm" class="admin-form">
+        <div class="field">
+          <label for="adminPassword">Пароль</label>
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Пароль" required>
+        </div>
+        <button type="submit" class="submit-btn">Войти</button>
+        <p class="form-status" id="adminStatus" role="status" aria-live="polite"></p>
+      </form>
+
+      <div id="adminArea" hidden>
+        <form id="postForm" class="admin-form">
+          <h3 class="admin-form__title" id="postFormTitle">Новая новость</h3>
+          <div class="field">
+            <label for="postTitle">Заголовок</label>
+            <input id="postTitle" type="text" placeholder="Заголовок новости" required>
+          </div>
+          <div class="field">
+            <label for="postDate">Дата</label>
+            <input id="postDate" type="date" required>
+          </div>
+          <div class="field">
+            <label for="postText">Текст</label>
+            <textarea id="postText" rows="6" placeholder="Текст новости…" required></textarea>
+          </div>
+          <div class="field">
+            <label for="adminToken">GitHub token для сохранения</label>
+            <input id="adminToken" type="password" placeholder="ghp_…" autocomplete="off" inputmode="text">
+            <span class="field-hint">Нужен, чтобы сохранить новость в репозиторий.</span>
+          </div>
+          <div class="admin-actions">
+            <button type="submit" class="submit-btn" id="postSave">Опубликовать</button>
+            <button type="button" class="ghost-btn" id="postCancel">Отмена</button>
+          </div>
+          <p class="form-status" id="postStatus" role="status" aria-live="polite"></p>
+        </form>
+
+        <div id="adminList" class="admin-list"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> Zerkinl</p>
+  </footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
