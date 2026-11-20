@@ -143,18 +143,32 @@ async function githubPutContent(content, message, token) {
   }
   const body = { message: message, content: b64encode(content) };
   if (sha) body.sha = sha;
-  const putRes = await fetch(url, {
+  let putRes = await fetch(url, {
     method: 'PUT',
     headers: headers,
     body: JSON.stringify(body),
   });
   if (!putRes.ok) {
-    let msg = 'Ошибка сохранения в GitHub';
-    try {
-      const err = await putRes.json();
-      if (err && err.message) msg = err.message;
-    } catch (e) {}
-    throw new Error(msg);
+    // retry once with a fresh sha (handles concurrent modification conflicts)
+    const getRes2 = await fetch(url, { headers: headers });
+    if (getRes2.ok) {
+      const meta2 = await getRes2.json();
+      const body2 = { message: message, content: b64encode(content) };
+      body2.sha = meta2.sha;
+      putRes = await fetch(url, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(body2),
+      });
+    }
+    if (!putRes.ok) {
+      let msg = 'Ошибка сохранения в GitHub';
+      try {
+        const err = await putRes.json();
+        if (err && err.message) msg = err.message;
+      } catch (e) {}
+      throw new Error(msg);
+    }
   }
 }
 
