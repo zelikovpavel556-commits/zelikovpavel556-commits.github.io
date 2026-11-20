@@ -294,7 +294,7 @@ postForm.addEventListener('submit', async (e) => {
   const post = { id: state.editingId || date + '-' + slugify(title), title, date, text };
   const next = state.editingId
     ? state.posts.map((p) => (p.id === state.editingId ? post : p))
-    : [...state.posts, post];
+    : [post, ...state.posts];
   try {
     await githubPutContent(JSON.stringify({ posts: next }, null, 2), state.editingId ? 'Update news' : 'Add news', token);
     state.posts = next;
