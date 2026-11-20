@@ -158,11 +158,12 @@ function renderPosts() {
 // ===== Работа с GitHub API (сохранение news.json) =====
 async function githubPutContent(content, message, token) {
   const url = 'https://api.github.com/repos/' + SITE.owner + '/' + SITE.repo + '/contents/' + SITE.file + '?ref=' + SITE.branch;
-  const headers = {
+  const headers = new Headers({
     'Authorization': 'Bearer ' + token,
     'Accept': 'application/vnd.github+json',
     'X-GitHub-Api-Version': '2022-11-28',
-  };
+  });
+  headers.set('Content-Type', 'application/json');
   const getRes = await fetch(url, { headers: headers });
   let sha;
   if (getRes.ok) {
