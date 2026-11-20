@@ -1,7 +1,7 @@
 // ===== Конфиг =====
 const SITE = {
-  owner: 'Zerkinl',
-  repo: 'Zerkinl.github.io',
+  owner: 'zelikovpavel556-commits',
+  repo: 'zelikovpavel556-commits.github.io',
   branch: 'main',
   file: 'news.json',
 };
