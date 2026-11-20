@@ -14,6 +14,8 @@ const state = {
   editingId: null,
 };
 
+const MAX_POSTS = 10;
+
 // ===== Утилиты =====
 function esc(value) {
   return String(value == null ? '' : value)
@@ -94,9 +96,10 @@ async function loadPosts() {
 function renderPosts() {
   const container = document.getElementById('posts');
   container.innerHTML = '';
-  const posts = [...state.posts].sort((a, b) =>
+  const sorted = [...state.posts].sort((a, b) =>
     String(b.date || '').localeCompare(String(a.date || ''))
   );
+  const posts = sorted.slice(0, MAX_POSTS);
   if (!posts.length) {
     container.innerHTML = '<div class="empty">Пока нет новостей.<br>Зайдите позже!</div>';
     return;
@@ -165,9 +168,10 @@ async function verifyAdminPassword(pw) {
 function loadAdminList() {
   const container = document.getElementById('adminList');
   container.innerHTML = '';
-  const posts = [...state.posts].sort((a, b) =>
+  const sorted = [...state.posts].sort((a, b) =>
     String(b.date || '').localeCompare(String(a.date || ''))
   );
+  const posts = sorted.slice(0, MAX_POSTS);
   if (!posts.length) {
     container.innerHTML = '<div class="empty">Пока нет новостей.</div>';
     return;
@@ -310,6 +314,21 @@ postForm.addEventListener('submit', async (e) => {
 document.getElementById('postCancel').addEventListener('click', () => {
   resetPostForm();
   document.getElementById('postStatus').textContent = '';
+});
+
+// ===== Тема =====
+const savedTheme = (() => {
+  try { return localStorage.getItem('news-theme'); } catch (e) { return null; }
+})();
+if (savedTheme) {
+  document.documentElement.dataset.theme = savedTheme;
+}
+document.querySelectorAll('[data-theme]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const t = btn.getAttribute('data-theme');
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem('news-theme', t); } catch (e) {}
+  });
 });
 
 loadPosts().catch((err) => {
