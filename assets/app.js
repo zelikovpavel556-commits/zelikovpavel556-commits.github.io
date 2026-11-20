@@ -12,6 +12,7 @@ const ADMIN_HASH = 'e4cd661b6931d052a88fb3c5391408f833c741f773bdc15dec0be4905e37
 const state = {
   posts: [],
   editingId: null,
+  page: 1,
 };
 
 const MAX_POSTS = 10;
@@ -99,7 +100,10 @@ function renderPosts() {
   const sorted = [...state.posts].sort((a, b) =>
     String(b.date || '').localeCompare(String(a.date || ''))
   );
-  const posts = sorted.slice(0, MAX_POSTS);
+  const totalPages = Math.max(1, Math.ceil(sorted.length / MAX_POSTS));
+  if (state.page > totalPages) state.page = totalPages;
+  const start = (state.page - 1) * MAX_POSTS;
+  const posts = sorted.slice(start, start + MAX_POSTS);
   if (!posts.length) {
     container.innerHTML = '<div class="empty">Пока нет новостей.<br>Зайдите позже!</div>';
     return;
@@ -124,6 +128,30 @@ function renderPosts() {
       (paragraphs || '<p>—</p>') +
       '</div>';
     container.appendChild(card);
+  }
+
+  if (totalPages > 1) {
+    const pag = document.createElement('div');
+    pag.className = 'pagination';
+    const prevBtn = document.createElement('button');
+    prevBtn.type = 'button';
+    prevBtn.className = 'mini-btn';
+    prevBtn.textContent = '←';
+    prevBtn.disabled = state.page <= 1;
+    prevBtn.addEventListener('click', () => { state.page = Math.max(1, state.page - 1); renderPosts(); loadAdminList(); });
+    const nextBtn = document.createElement('button');
+    nextBtn.type = 'button';
+    nextBtn.className = 'mini-btn';
+    nextBtn.textContent = '→';
+    nextBtn.disabled = state.page >= totalPages;
+    nextBtn.addEventListener('click', () => { state.page = Math.min(totalPages, state.page + 1); renderPosts(); loadAdminList(); });
+    const info = document.createElement('div');
+    info.className = 'pagination__info';
+    info.textContent = 'Страница ' + state.page + ' из ' + totalPages;
+    pag.appendChild(prevBtn);
+    pag.appendChild(info);
+    pag.appendChild(nextBtn);
+    container.appendChild(pag);
   }
 }
 
@@ -316,6 +344,7 @@ postForm.addEventListener('submit', async (e) => {
   try {
     await githubPutContent(JSON.stringify({ posts: next }, null, 2), state.editingId ? 'Update news' : 'Add news', token);
     state.posts = next;
+    state.page = 1;
     resetPostForm();
     await loadPosts();
     loadAdminList();
